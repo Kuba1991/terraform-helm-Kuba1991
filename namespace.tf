@@ -1,18 +1,17 @@
 resource "kubernetes_namespace" "example" {
   metadata {
-    name = "nginx"
+    name = var.namespace
   }
 }
-
 
 resource "kubernetes_resource_quota" "podlimit" {
   metadata {
     name = "podlimit"
-    namespace = "nginx"
+    namespace = var.namespace
   }
   spec {
     hard = {
-      pods = 10
+      pods = var.podlimit
     }
     scopes = ["BestEffort"]
   }
@@ -20,18 +19,17 @@ resource "kubernetes_resource_quota" "podlimit" {
 
 
 
-
-resource "kubernetes_limit_range_v1" "nginx-limit" {
+resource "kubernetes_limit_range_v1" "nginx-app-limit" {
   metadata {
-    name = "nginx-limit"
-    namespace = "nginx"
+    name = "nginx-app-limit"
+    namespace = var.namespace
   }
   spec {
     limit {
       type = "Pod"
       max = {
-        cpu    = "200m"
-        memory = "1024Mi"
+        cpu    = var.cpu_max
+        memory = var.mem_max
       }
     }
     limit {
